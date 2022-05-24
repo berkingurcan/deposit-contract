@@ -1,5 +1,8 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::near_bindgen;
+use near_sdk::{near_bindgen, env};
+use near_sdk::payable;
+use near_sdk::{AccountId, Balance, Duration, Gas, Timestamp};
+use near_sdk::{Promise, PromiseResult};
 
 #[near_bindgen]
 #[derive(Default, BorshDeserialize, BorshSerialize)]
@@ -9,7 +12,10 @@ pub struct Contract {
 
 #[near_bindgen]
 impl Contract {
-    // ADD CONTRACT METHODS HERE
+    #[payable]
+    pub fn deposit(amount: U128, to: AccountId) -> Promise {
+        Promise::new(this).transfer(amount.0)
+    }
 }
 
 /*
