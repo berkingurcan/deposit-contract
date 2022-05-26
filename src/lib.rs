@@ -11,7 +11,6 @@ pub struct Contract {
 
 #[near_bindgen]
 impl Contract {
-
     #[payable]
     pub fn deposit() {
         env::log(format!("amount: {}", env::attached_deposit()).as_bytes());
