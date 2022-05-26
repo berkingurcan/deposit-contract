@@ -1,14 +1,12 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::{near_bindgen, env};
-use near_sdk::payable;
-use near_sdk::{AccountId, Balance};
-use near_sdk::{Promise, PromiseResult};
+use near_sdk::json_types::{U128};
+use near_sdk::{Promise};
 
 #[near_bindgen]
 #[derive(Default, BorshDeserialize, BorshSerialize)]
 pub struct Contract {
     // SETUP CONTRACT STATE
-    let deposit_map: UnorderedMap::new(b"a".to_vec());
 }
 
 #[near_bindgen]
@@ -16,23 +14,12 @@ impl Contract {
 
     #[payable]
     pub fn deposit() {
-        let account_id = env::signer_account_id();
-        let current_value = deposit_map.get(&account_id).unwrap_or(0);
-        deposit_map.insert(&account_id, &(current_value + env::attached_deposit()));
+        env::log(format!("amount: {}", env::attached_deposit()).as_bytes());
     }
 
     #[payable]
-    pub fn withdraw(amount: U128) -> Promise {
-        let account_id = env::signer_account_id();
-        let current_value = deposit_map.get(&account_id).unwrap_or(0);
-        let amount_to_withdraw: Balance = amount.into();
-        
-        assert!(
-            (amount_to_withdraw <= current_value) && (amount_to_withdraw > 0),
-            "Amount of withdrawal is invalid",
-        );
-        
-        Promise::new(env::signer_account_id()).transfer(amount_to_withdraw)
+    pub fn withdraw(amount: U128) -> Promise {        
+        Promise::new(env::signer_account_id()).transfer(amount.0)
     }
 }
 
